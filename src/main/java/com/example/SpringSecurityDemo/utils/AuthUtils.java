@@ -1,6 +1,7 @@
 package com.example.SpringSecurityDemo.utils;
 
 import com.example.SpringSecurityDemo.model.Users;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,5 +30,17 @@ public class AuthUtils {
                 .expiration(new Date(System.currentTimeMillis()+1000*60*10))
                 .signWith(getSigningKey())
                 .compact();
+    }
+
+    public String getUserNameFromToken(String token) {
+
+       Claims claims =  Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+       return  claims.getSubject();
+
     }
 }
