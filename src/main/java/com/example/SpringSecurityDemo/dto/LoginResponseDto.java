@@ -1,5 +1,6 @@
 package com.example.SpringSecurityDemo.dto;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,6 +17,11 @@ public class LoginResponseDto {
     }
 
     public  LoginResponseDto(){}
+
+    public LoginResponseDto(int id, String jwtToken) {
+        this.id=id;
+        this.jwtToken=jwtToken;
+    }
 
     public int getId() {
         return id;

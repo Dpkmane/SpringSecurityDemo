@@ -1,13 +1,17 @@
 package com.example.SpringSecurityDemo.service;
 
 import com.example.SpringSecurityDemo.dto.LoginResponseDto;
+import com.example.SpringSecurityDemo.dto.RegisterResponseDto;
+import com.example.SpringSecurityDemo.model.AuthProvidertype;
 import com.example.SpringSecurityDemo.model.Users;
+import com.example.SpringSecurityDemo.repo.UserRepo;
 import com.example.SpringSecurityDemo.utils.AuthUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,6 +21,8 @@ public class AuthService {
 
     @Autowired
     private AuthUtils authUtils;
+
+
 
     public LoginResponseDto login(Users user) {
 
@@ -34,4 +40,6 @@ public class AuthService {
         String token = authUtils.generateAccessToken(users);
         return new LoginResponseDto(users.getId(),users.getUsername(),token);
     }
+
+
 }

@@ -1,5 +1,7 @@
 package com.example.SpringSecurityDemo.config;
 
+import com.example.SpringSecurityDemo.service.JwtAuthFilter;
+import com.example.SpringSecurityDemo.utils.OAuth2SuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.proxy.NoOp;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -27,6 +30,10 @@ public class SpringSecurityConfig {
 
     @Autowired
     private UserDetailsService userDetailsService;
+    @Autowired
+    private JwtAuthFilter jwtAuthFilter;
+    @Autowired
+    private OAuth2SuccessHandler successHandler;
 
 
 
@@ -36,8 +43,17 @@ public class SpringSecurityConfig {
                 .sessionManagement(
                         sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
-                        req -> req.requestMatchers("/login", "/register").permitAll())
-                .httpBasic(Customizer.withDefaults()).build();
+                        req -> req.requestMatchers("/login", "/register")
+                                .permitAll().anyRequest().authenticated()
+                ).addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(
+                        oauth2 ->
+                                oauth2.failureHandler((request, response, exception) ->
+                        {
+                            System.out.println("oauth login error" + exception.getMessage());
+                        }
+                         ).successHandler(successHandler)).build();
+//
     }
 
     @Bean
